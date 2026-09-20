@@ -51,14 +51,25 @@ class ConsequenceSmellDetector {
                     subDesc: 'course_name'
                 };
             } else if (table.primaryKey.length > 1 && table.columns.length > table.primaryKey.length + 1) {
-                // Generic composite key table with descriptive columns
-                combinedEntity = {
-                    parent: table.name,
-                    sub: 'Related Entity',
-                    key: table.primaryKey.join(', '),
-                    subKey: table.primaryKey[0],
-                    subDesc: cols.find(c => !table.primaryKey.includes(c)) || 'attributes'
-                };
+                // Skip if this is a proper junction/associative table:
+                // all PK columns are covered by foreign keys → it is already decomposed correctly
+                const isJunctionTable = table.primaryKey.length > 0 &&
+                    table.foreignKeys && table.foreignKeys.length > 0 &&
+                    table.primaryKey.every(pk =>
+                        table.foreignKeys.some(fk =>
+                            fk.fromColumns && fk.fromColumns.map(c => c.toLowerCase()).includes(pk.toLowerCase())
+                        )
+                    );
+                if (!isJunctionTable) {
+                    // Generic composite key table with descriptive columns
+                    combinedEntity = {
+                        parent: table.name,
+                        sub: 'Related Entity',
+                        key: table.primaryKey.join(', '),
+                        subKey: table.primaryKey[0],
+                        subDesc: cols.find(c => !table.primaryKey.includes(c)) || 'attributes'
+                    };
+                }
             }
 
             if (combinedEntity) {

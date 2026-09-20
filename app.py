@@ -21,6 +21,11 @@ def test_runner():
     """Render the automated in-browser test runner page."""
     return render_template('test_runner.html')
 
+@app.route('/debug-redesign')
+def debug_redesign():
+    """Render the redesign debugging page."""
+    return render_template('debug_redesign.html')
+
 @app.route('/api/health')
 def health_check():
     """Health check endpoint."""

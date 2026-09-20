@@ -43,15 +43,21 @@ class SchemaAnalyzer {
         }
 
         // Attach context functional dependencies to tables if provided
+        // In relational theory, X -> Y applies to relation R iff X ⊆ Attrs(R)
         if (context.functionalDependenciesText) {
             const parsedFDs = DependencyEngine.parseFDString(context.functionalDependenciesText);
             for (const table of schema.tables) {
-                // Assign FDs relevant to table attributes
                 const tableCols = table.getColumnNames().map(c => c.toLowerCase());
-                const relevantFDs = parsedFDs.filter(fd => {
-                    const allInvolved = [...fd.determinant, ...fd.dependent];
-                    return allInvolved.some(attr => tableCols.includes(attr));
-                });
+                const relevantFDs = [];
+                for (const fd of parsedFDs) {
+                    const detInTable = fd.determinant.every(attr => tableCols.includes(attr.toLowerCase()));
+                    if (detInTable) {
+                        const depInTable = fd.dependent.filter(attr => tableCols.includes(attr.toLowerCase()) && !fd.determinant.includes(attr.toLowerCase()));
+                        if (depInTable.length > 0) {
+                            relevantFDs.push(new FunctionalDependency(fd.determinant, depInTable));
+                        }
+                    }
+                }
                 table.functionalDependencies.push(...relevantFDs);
             }
         }

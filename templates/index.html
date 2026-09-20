@@ -639,69 +639,39 @@
             <h2 style="font-size: 30px; font-weight: 800; margin-bottom: 8px;">Project Contributors & Mentorship</h2>
             <p class="text-muted" style="margin-bottom: 36px;">B.Tech Course in Database Systems | SchemaSense Academic Capstone</p>
 
-            <!-- Interactive Student & Faculty Details Editor -->
-            <div class="norm-section-card" style="text-align: left; max-width: 720px; margin: 0 auto 30px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                    <h4 style="font-size: 16px; font-weight: 700; color: var(--color-primary); margin: 0;">✏️ Student & Faculty Information Editor</h4>
-                    <span class="badge badge-syllabus">Project Details</span>
-                </div>
-                <p class="text-muted" style="font-size: 12.5px; margin-bottom: 14px;">
-                    Update student names, register numbers, and faculty details. Saved info updates the team cards, PDF reports, and downloadable text summaries instantly.
-                </p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 16px;">
-                    <div>
-                        <label style="font-size: 12px; font-weight: bold;">Student 1 Name:</label>
-                        <input type="text" id="input-student1-name" class="form-input" style="width: 100%; margin-top: 4px;" placeholder="e.g. Sneha Sahu">
-                    </div>
-                    <div>
-                        <label style="font-size: 12px; font-weight: bold;">Student 1 Register Number:</label>
-                        <input type="text" id="input-student1-reg" class="form-input" style="width: 100%; margin-top: 4px;" placeholder="e.g. 21BCE1001">
-                    </div>
-                    <div>
-                        <label style="font-size: 12px; font-weight: bold;">Student 2 Name (Optional):</label>
-                        <input type="text" id="input-student2-name" class="form-input" style="width: 100%; margin-top: 4px;" placeholder="Teammate Name (or leave blank)">
-                    </div>
-                    <div>
-                        <label style="font-size: 12px; font-weight: bold;">Student 2 Register Number:</label>
-                        <input type="text" id="input-student2-reg" class="form-input" style="width: 100%; margin-top: 4px;" placeholder="Teammate Register No">
-                    </div>
-                    <div>
-                        <label style="font-size: 12px; font-weight: bold;">Faculty Guide Name:</label>
-                        <input type="text" id="input-faculty-name" class="form-input" style="width: 100%; margin-top: 4px;" value="Dr. Swaminathan A">
-                    </div>
-                    <div>
-                        <label style="font-size: 12px; font-weight: bold;">Faculty Designation:</label>
-                        <input type="text" id="input-faculty-title" class="form-input" style="width: 100%; margin-top: 4px;" value="Assistant Professor">
-                    </div>
-                </div>
-                <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                    <button class="btn btn-primary btn-sm" id="btn-save-student-details">💾 Save & Update Team Info</button>
-                </div>
-            </div>
 
-            <div class="team-grid">
+            <!-- Hardcoded Team Cards -->
+            <div class="team-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
                 <!-- Team Member 1 -->
-                <div class="team-card" id="card-student-1">
+                <div class="team-card">
                     <div class="student-avatar-placeholder">👤</div>
-                    <h4 id="display-student1-name">[ENTER NAME]</h4>
-                    <div class="reg-number" id="display-student1-reg">Register No: [ENTER REGISTER NUMBER]</div>
-                    <p class="text-muted" style="font-size: 13px;">B.Tech Computer Science & Engineering</p>
+                    <h4>Sneha Sahu</h4>
+                    <div class="reg-number">Register No: 25BCE5319</div>
+                    <p class="text-muted" style="font-size: 13px;">B.Tech Computer Science &amp; Engineering</p>
                 </div>
 
                 <!-- Team Member 2 -->
-                <div class="team-card" id="card-student-2">
+                <div class="team-card">
                     <div class="student-avatar-placeholder">👤</div>
-                    <h4 id="display-student2-name">[ENTER NAME]</h4>
-                    <div class="reg-number" id="display-student2-reg">Register No: [ENTER REGISTER NUMBER]</div>
-                    <p class="text-muted" style="font-size: 13px;">B.Tech Computer Science & Engineering</p>
+                    <h4>Ananya Krishna</h4>
+                    <div class="reg-number">Register No: 25BCE5333</div>
+                    <p class="text-muted" style="font-size: 13px;">B.Tech Computer Science &amp; Engineering</p>
+                </div>
+
+                <!-- Team Member 3 -->
+                <div class="team-card">
+                    <div class="student-avatar-placeholder">👤</div>
+                    <h4>Gouthamkrishna S V</h4>
+                    <div class="reg-number">Register No: 25BCE5410</div>
+                    <p class="text-muted" style="font-size: 13px;">B.Tech Computer Science &amp; Engineering</p>
                 </div>
             </div>
 
             <div class="guide-box">
                 <span class="info-label">Faculty Guidance</span>
-                <h3 style="font-size: 20px; color: var(--color-primary); margin: 6px 0 2px;" id="display-faculty-name">Dr. Swaminathan A</h3>
-                <div style="font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;" id="display-faculty-title">Assistant Professor</div>
-                <p class="text-muted" style="font-size: 13px;">Department of Computer Science & Engineering<br>School of Computer Science & Information Systems</p>
+                <h3 style="font-size: 20px; color: var(--color-primary); margin: 6px 0 2px;">Dr. Swaminathan Annadurai</h3>
+                <div style="font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Assistant Professor</div>
+                <p class="text-muted" style="font-size: 13px;">Department of Computer Science &amp; Engineering<br>School of Computer Science &amp; Information Systems</p>
             </div>
         </div>
     </main>
