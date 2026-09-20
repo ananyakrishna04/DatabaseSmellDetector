@@ -149,9 +149,18 @@ class SchemaSenseReportGenerator {
         demonstratedConcepts.forEach(c => {
             report += `  ✓ ${c}\n`;
         });
+        const studentInfo = typeof localStorage !== 'undefined' ? localStorage.getItem('schemasense_student1_name') : null;
+        const studentReg = typeof localStorage !== 'undefined' ? localStorage.getItem('schemasense_student1_reg') : null;
+        const mentorName = (typeof localStorage !== 'undefined' && localStorage.getItem('schemasense_faculty_name')) || 'Dr. Swaminathan A';
+        const mentorDesig = (typeof localStorage !== 'undefined' && localStorage.getItem('schemasense_faculty_title')) || 'Assistant Professor';
+
+        if (studentInfo) {
+            report += `Submitted By      : ${studentInfo} ${studentReg ? `(${studentReg})` : ''}\n`;
+        }
+        report += `Guided By         : ${mentorName}, ${mentorDesig}\n`;
         report += '\n========================================================================================\n';
         report += 'Report generated automatically by SchemaSense – Database Schema Smell Detector\n';
-        report += 'Guided by: Dr. Swaminathan A, Assistant Professor\n';
+        report += `Faculty Guide     : ${mentorName}, ${mentorDesig}\n`;
         report += '========================================================================================\n';
 
         return report;
@@ -194,7 +203,14 @@ class SchemaSenseReportGenerator {
         const detected = smells.filter(s => s.status === 'Detected');
         const potential = smells.filter(s => s.status === 'Potential / Needs Review');
 
-        const html = `
+                const student1 = (typeof localStorage !== 'undefined' && localStorage.getItem('schemasense_student1_name')) || '';
+                const reg1 = (typeof localStorage !== 'undefined' && localStorage.getItem('schemasense_student1_reg')) || '';
+                const student2 = (typeof localStorage !== 'undefined' && localStorage.getItem('schemasense_student2_name')) || '';
+                const reg2 = (typeof localStorage !== 'undefined' && localStorage.getItem('schemasense_student2_reg')) || '';
+                const mentor = (typeof localStorage !== 'undefined' && localStorage.getItem('schemasense_faculty_name')) || 'Dr. Swaminathan A';
+                const mentorTitle = (typeof localStorage !== 'undefined' && localStorage.getItem('schemasense_faculty_title')) || 'Assistant Professor';
+
+                const html = `
             <!DOCTYPE html>
             <html>
             <head>
@@ -231,7 +247,8 @@ class SchemaSenseReportGenerator {
                 <div class="header">
                     <h1 class="title">SchemaSense – Database Schema Smell Detector</h1>
                     <div class="subtitle">Academic Analysis Report | B.Tech Course: Database Systems</div>
-                    <div style="font-size: 12px; color: #64748b; margin-top: 6px;">Under Guidance of: <strong>Dr. Swaminathan A</strong>, Assistant Professor</div>
+                    ${student1 ? `<div style="font-size: 13px; color: #334155; margin-top: 6px;">Student Author: <strong>${student1}</strong> ${reg1 ? `(${reg1})` : ''} ${student2 ? ` | <strong>${student2}</strong> ${reg2 ? `(${reg2})` : ''}` : ''}</div>` : ''}
+                    <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Faculty Guide: <strong>${mentor}</strong>, ${mentorTitle}</div>
                 </div>
 
                 <div class="meta-bar">

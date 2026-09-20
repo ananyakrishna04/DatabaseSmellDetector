@@ -13,6 +13,7 @@ class SchemaSenseApp {
         this.initTheme();
         this.initEvents();
         this.initVisualBuilder();
+        this.initStudentDetails();
         this.loadSample('student-mgmt');
     }
 
@@ -234,17 +235,161 @@ class SchemaSenseApp {
                 <p class="redesign-desc">💡 <strong>Suggested Normalization Strategy:</strong> ${redesign.description}</p>
                 <div class="redesign-comparison-grid">
                     <div class="redesign-col before-col">
-                        <h5>❌ Original Schema Issues</h5>
+                        <h5>❌ Original Schema (With Smells)</h5>
                         <pre><code>${redesign.before}</code></pre>
                     </div>
                     <div class="redesign-col after-col">
-                        <h5>✓ Normalized / Improved Design</h5>
-                        <pre><code>${redesign.after}</code></pre>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                            <h5 style="margin: 0;">✓ Normalized Design (3NF / BCNF)</h5>
+                            <span class="badge badge-pass">Executable DDL</span>
+                        </div>
+                        <pre><code id="redesign-sql-display">${redesign.after}</code></pre>
+                        <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn btn-primary btn-sm" id="btn-load-redesign-direct">
+                                🚀 Load Redesign into Analyzer & Run
+                            </button>
+                            <button class="btn btn-outline btn-sm" id="btn-copy-redesign-sql">
+                                📋 Copy Clean SQL
+                            </button>
+                            <span id="copy-redesign-status" style="font-size: 12px; color: #10b981; display: none; align-items: center; font-weight: bold;">✓ Copied to clipboard!</span>
+                        </div>
                     </div>
                 </div>
-                <p class="redesign-note"><em>Note: Redesign should always be validated against workload queries and physical volume requirements.</em></p>
+                <p class="redesign-note"><em>Note: Redesign eliminates transitive and partial dependencies, adds required B+ tree foreign key indexes, and enforces candidate key constraints.</em></p>
             </div>
         `;
+
+        // Bind Load Redesign button (automatically tests the redesign with zero effort!)
+        const loadBtn = document.getElementById('btn-load-redesign-direct');
+        if (loadBtn) {
+            loadBtn.onclick = () => {
+                const sqlInput = document.getElementById('sql-input');
+                const fdInput = document.getElementById('fd-input');
+                if (sqlInput) sqlInput.value = redesign.after;
+                if (fdInput) fdInput.value = redesign.redesignFDs || '';
+
+                // Switch to SQL tab
+                const sqlTabBtn = document.querySelector('.input-tab-btn[data-pane="pane-sql"]');
+                if (sqlTabBtn) sqlTabBtn.click();
+
+                // Run analysis
+                this.runAnalysis();
+
+                // Scroll smoothly to results
+                const resSec = document.getElementById('results-section');
+                if (resSec) resSec.scrollIntoView({ behavior: 'smooth' });
+            };
+        }
+
+        // Bind Copy button
+        const copyBtn = document.getElementById('btn-copy-redesign-sql');
+        const statusSpan = document.getElementById('copy-redesign-status');
+        if (copyBtn) {
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(redesign.after).then(() => {
+                    if (statusSpan) {
+                        statusSpan.style.display = 'inline-flex';
+                        setTimeout(() => { statusSpan.style.display = 'none'; }, 2500);
+                    }
+                }).catch(() => {
+                    // Fallback
+                    const textArea = document.createElement('textarea');
+                    textArea.value = redesign.after;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    if (statusSpan) {
+                        statusSpan.style.display = 'inline-flex';
+                        setTimeout(() => { statusSpan.style.display = 'none'; }, 2500);
+                    }
+                });
+            };
+        }
+    }
+
+    /* ==========================================================================
+       STUDENT & FACULTY DETAILS MANAGEMENT
+       ========================================================================== */
+    initStudentDetails() {
+        const s1NameInput = document.getElementById('input-student1-name');
+        const s1RegInput = document.getElementById('input-student1-reg');
+        const s2NameInput = document.getElementById('input-student2-name');
+        const s2RegInput = document.getElementById('input-student2-reg');
+        const facNameInput = document.getElementById('input-faculty-name');
+        const facTitleInput = document.getElementById('input-faculty-title');
+
+        // Load saved values from localStorage
+        const s1Name = localStorage.getItem('schemasense_student1_name') || '';
+        const s1Reg = localStorage.getItem('schemasense_student1_reg') || '';
+        const s2Name = localStorage.getItem('schemasense_student2_name') || '';
+        const s2Reg = localStorage.getItem('schemasense_student2_reg') || '';
+        const facName = localStorage.getItem('schemasense_faculty_name') || 'Dr. Swaminathan A';
+        const facTitle = localStorage.getItem('schemasense_faculty_title') || 'Assistant Professor';
+
+        if (s1NameInput) s1NameInput.value = s1Name;
+        if (s1RegInput) s1RegInput.value = s1Reg;
+        if (s2NameInput) s2NameInput.value = s2Name;
+        if (s2RegInput) s2RegInput.value = s2Reg;
+        if (facNameInput) facNameInput.value = facName;
+        if (facTitleInput) facTitleInput.value = facTitle;
+
+        this.updateTeamDisplay({ s1Name, s1Reg, s2Name, s2Reg, facName, facTitle });
+
+        const saveBtn = document.getElementById('btn-save-student-details');
+        if (saveBtn) {
+            saveBtn.onclick = () => {
+                const newS1Name = s1NameInput ? s1NameInput.value.trim() : '';
+                const newS1Reg = s1RegInput ? s1RegInput.value.trim() : '';
+                const newS2Name = s2NameInput ? s2NameInput.value.trim() : '';
+                const newS2Reg = s2RegInput ? s2RegInput.value.trim() : '';
+                const newFacName = facNameInput ? facNameInput.value.trim() : 'Dr. Swaminathan A';
+                const newFacTitle = facTitleInput ? facTitleInput.value.trim() : 'Assistant Professor';
+
+                localStorage.setItem('schemasense_student1_name', newS1Name);
+                localStorage.setItem('schemasense_student1_reg', newS1Reg);
+                localStorage.setItem('schemasense_student2_name', newS2Name);
+                localStorage.setItem('schemasense_student2_reg', newS2Reg);
+                localStorage.setItem('schemasense_faculty_name', newFacName);
+                localStorage.setItem('schemasense_faculty_title', newFacTitle);
+
+                this.updateTeamDisplay({
+                    s1Name: newS1Name,
+                    s1Reg: newS1Reg,
+                    s2Name: newS2Name,
+                    s2Reg: newS2Reg,
+                    facName: newFacName,
+                    facTitle: newFacTitle
+                });
+
+                alert('✓ Student and Faculty details saved! These details are now visible on the cards and will appear in all downloaded reports.');
+            };
+        }
+    }
+
+    updateTeamDisplay({ s1Name, s1Reg, s2Name, s2Reg, facName, facTitle }) {
+        const dS1Name = document.getElementById('display-student1-name');
+        const dS1Reg = document.getElementById('display-student1-reg');
+        const dS2Name = document.getElementById('display-student2-name');
+        const dS2Reg = document.getElementById('display-student2-reg');
+        const dFacName = document.getElementById('display-faculty-name');
+        const dFacTitle = document.getElementById('display-faculty-title');
+        const cardS2 = document.getElementById('card-student-2');
+
+        if (dS1Name) dS1Name.textContent = s1Name || '[ENTER NAME]';
+        if (dS1Reg) dS1Reg.textContent = s1Reg ? `Register No: ${s1Reg}` : 'Register No: [ENTER REGISTER NUMBER]';
+
+        if (s2Name) {
+            if (cardS2) cardS2.style.display = 'block';
+            if (dS2Name) dS2Name.textContent = s2Name;
+            if (dS2Reg) dS2Reg.textContent = s2Reg ? `Register No: ${s2Reg}` : '';
+        } else {
+            if (dS2Name) dS2Name.textContent = '[ENTER NAME]';
+            if (dS2Reg) dS2Reg.textContent = 'Register No: [ENTER REGISTER NUMBER]';
+        }
+
+        if (dFacName) dFacName.textContent = facName || 'Dr. Swaminathan A';
+        if (dFacTitle) dFacTitle.textContent = facTitle || 'Assistant Professor';
     }
 
     /* ==========================================================================

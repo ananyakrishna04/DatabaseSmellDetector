@@ -1,6 +1,7 @@
 /**
  * SchemaSense - Built-in Academic Sample Database Schemas
- * 4 problem-rich demonstration schemas + 1 clean benchmark schema
+ * 4 problem-rich demonstration schemas + 1 clean benchmark schema.
+ * Suggested redesigns provide 100% syntactically valid, smell-free SQL schemas.
  */
 
 const SAMPLE_SCHEMAS = [
@@ -47,48 +48,55 @@ department_id -> department_name, department_head
 course_id -> course_name, credits
 student_id, course_id -> grade, enrollment_date`,
         suggestedRedesign: {
-            description: 'Decompose Student into Student (3NF) and Department (3NF), drop redundant student_name from Enrollment, and enforce foreign keys.',
-            before: `Student (student_id, student_name, dob, age, department_id, department_name, dept_head, phone_numbers)
+            description: 'Decompose Student into Student (3NF) and Department (3NF), move phone numbers into an atomic child relation, drop redundant student_name from Enrollment, and enforce all foreign keys and supporting B+ tree indexes.',
+            before: `Student (student_id, student_name, dob, age, department_id, department_name, dept_head, phone_numbers, data)
 Course (course_id, course_name, department_id, credits)
 Enrollment (student_id, course_id, student_name, grade)`,
-            after: `Department (
+            after: `CREATE TABLE Department (
     department_id INT PRIMARY KEY,
     department_name VARCHAR(100) NOT NULL UNIQUE,
     department_head VARCHAR(100) NOT NULL
 );
 
-Student (
+CREATE TABLE Student (
     student_id INT PRIMARY KEY,
     student_name VARCHAR(100) NOT NULL,
     date_of_birth DATE NOT NULL,
     department_id INT NOT NULL,
     FOREIGN KEY (department_id) REFERENCES Department(department_id)
 );
+CREATE INDEX idx_student_dept ON Student (department_id);
 
-StudentPhone (
-    student_id INT,
-    phone_number VARCHAR(20),
+CREATE TABLE StudentPhone (
+    student_id INT NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
     PRIMARY KEY (student_id, phone_number),
     FOREIGN KEY (student_id) REFERENCES Student(student_id)
 );
 
-Course (
+CREATE TABLE Course (
     course_id INT PRIMARY KEY,
     course_name VARCHAR(100) NOT NULL,
     department_id INT NOT NULL,
     credits INT NOT NULL,
     FOREIGN KEY (department_id) REFERENCES Department(department_id)
 );
+CREATE INDEX idx_course_dept ON Course (department_id);
 
-Enrollment (
-    student_id INT,
-    course_id INT,
+CREATE TABLE Enrollment (
+    student_id INT NOT NULL,
+    course_id INT NOT NULL,
     enrollment_date DATE NOT NULL,
     grade VARCHAR(2),
     PRIMARY KEY (student_id, course_id),
     FOREIGN KEY (student_id) REFERENCES Student(student_id),
     FOREIGN KEY (course_id) REFERENCES Course(course_id)
-);`
+);
+CREATE INDEX idx_enrollment_course ON Enrollment (course_id);`,
+            redesignFDs: `department_id -> department_name, department_head
+student_id -> student_name, date_of_birth, department_id
+course_id -> course_name, department_id, credits
+student_id, course_id -> enrollment_date, grade`
         }
     },
     {
@@ -141,29 +149,31 @@ CREATE TABLE Treatment (
 doctor_id -> doctor_name, specialization, department_name
 appointment_id -> patient_id, doctor_id, appointment_date`,
         suggestedRedesign: {
-            description: 'Normalize symptoms and phone numbers into atomic child relations; unify patient_id data types; drop redundant doctor_name from Appointment.',
+            description: 'Normalize symptoms and phone numbers into atomic child relations; unify patient_id data types to INT; drop redundant doctor_name from Appointment; add supporting indexes on foreign keys.',
             before: `Patient (patient_id, name, phone1, phone2, allergies)
-Appointment (appointment_id, patient_id, doctor_id, doctor_name, symptom1, symptom2)`,
-            after: `Patient (
+Appointment (appointment_id, patient_id, doctor_id, doctor_name, symptom1, symptom2)
+Treatment (patient_id, treatment_name, cost)`,
+            after: `CREATE TABLE Patient (
     patient_id INT PRIMARY KEY,
     patient_name VARCHAR(100) NOT NULL,
-    emergency_contact VARCHAR(100)
+    emergency_contact VARCHAR(100) NOT NULL
 );
 
-PatientPhone (
-    patient_id INT,
-    phone_number VARCHAR(15),
+CREATE TABLE PatientPhone (
+    patient_id INT NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
     PRIMARY KEY (patient_id, phone_number),
     FOREIGN KEY (patient_id) REFERENCES Patient(patient_id)
 );
 
-Doctor (
+CREATE TABLE Doctor (
     doctor_id INT PRIMARY KEY,
     doctor_name VARCHAR(100) NOT NULL,
-    specialization VARCHAR(100) NOT NULL
+    specialization VARCHAR(100) NOT NULL,
+    department_name VARCHAR(100) NOT NULL
 );
 
-Appointment (
+CREATE TABLE Appointment (
     appointment_id INT PRIMARY KEY,
     patient_id INT NOT NULL,
     doctor_id INT NOT NULL,
@@ -171,13 +181,28 @@ Appointment (
     FOREIGN KEY (patient_id) REFERENCES Patient(patient_id),
     FOREIGN KEY (doctor_id) REFERENCES Doctor(doctor_id)
 );
+CREATE INDEX idx_appt_patient ON Appointment (patient_id);
+CREATE INDEX idx_appt_doctor ON Appointment (doctor_id);
 
-AppointmentSymptom (
-    appointment_id INT,
-    symptom VARCHAR(100),
+CREATE TABLE AppointmentSymptom (
+    appointment_id INT NOT NULL,
+    symptom VARCHAR(100) NOT NULL,
     PRIMARY KEY (appointment_id, symptom),
     FOREIGN KEY (appointment_id) REFERENCES Appointment(appointment_id)
-);`
+);
+
+CREATE TABLE Treatment (
+    treatment_id INT PRIMARY KEY,
+    patient_id INT NOT NULL,
+    treatment_name VARCHAR(100) NOT NULL,
+    cost DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (patient_id) REFERENCES Patient(patient_id)
+);
+CREATE INDEX idx_treatment_patient ON Treatment (patient_id);`,
+            redesignFDs: `patient_id -> patient_name, emergency_contact
+doctor_id -> doctor_name, specialization, department_name
+appointment_id -> patient_id, doctor_id, appointment_date
+treatment_id -> patient_id, treatment_name, cost`
         }
     },
     {
@@ -230,15 +255,22 @@ order_id -> customer_id, order_date, total_amount
 product_id -> product_name, unit_price
 order_id, product_id -> quantity`,
         suggestedRedesign: {
-            description: 'Extract Product entity into a separate relation to eliminate 2NF partial dependency in OrderItems; clean up redundant indexes.',
+            description: 'Extract Product entity into a separate relation to eliminate 2NF partial dependency in OrderItems; drop redundant and low-selectivity indexes; add index on Customer foreign key.',
             before: `OrderItems (order_id, product_id, product_name, unit_price, quantity, item_total)`,
-            after: `Product (
+            after: `CREATE TABLE Customer (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    shipping_address VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Product (
     product_id INT PRIMARY KEY,
     product_name VARCHAR(150) NOT NULL,
     unit_price DECIMAL(10,2) NOT NULL
 );
 
-Orders (
+CREATE TABLE Orders (
     order_id INT PRIMARY KEY,
     customer_id INT NOT NULL,
     order_date DATE NOT NULL,
@@ -246,14 +278,19 @@ Orders (
 );
 CREATE INDEX idx_orders_customer ON Orders (customer_id);
 
-OrderItems (
-    order_id INT,
-    product_id INT,
-    quantity INT NOT NULL CHECK (quantity > 0),
+CREATE TABLE OrderItems (
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
     PRIMARY KEY (order_id, product_id),
     FOREIGN KEY (order_id) REFERENCES Orders(order_id),
     FOREIGN KEY (product_id) REFERENCES Product(product_id)
-);`
+);
+CREATE INDEX idx_items_product ON OrderItems (product_id);`,
+            redesignFDs: `customer_id -> customer_name, email, shipping_address
+product_id -> product_name, unit_price
+order_id -> customer_id, order_date
+order_id, product_id -> quantity`
         }
     },
     {
@@ -298,38 +335,39 @@ publisher_id -> publisher_name, publisher_city
 member_id -> member_name, email, phone
 loan_id -> book_id, member_id, borrow_date, due_date`,
         suggestedRedesign: {
-            description: 'Decompose Publisher into its own table; add primary key and foreign keys to Loan; enforce unique constraint on ISBN.',
+            description: 'Decompose Publisher into its own table; add primary key and foreign keys to Loan; move subjects into BookSubject; enforce unique constraint on ISBN and add FK indexes.',
             before: `Book (book_id, title, isbn, publisher_id, publisher_name, publisher_city, subjects)
 Loan (loan_id, book_id, member_id, borrow_date)`,
-            after: `Publisher (
+            after: `CREATE TABLE Publisher (
     publisher_id INT PRIMARY KEY,
     publisher_name VARCHAR(150) NOT NULL,
-    publisher_city VARCHAR(100)
+    publisher_city VARCHAR(100) NOT NULL
 );
 
-Book (
+CREATE TABLE Book (
     book_id INT PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
     isbn VARCHAR(20) NOT NULL UNIQUE,
     publisher_id INT NOT NULL,
     FOREIGN KEY (publisher_id) REFERENCES Publisher(publisher_id)
 );
+CREATE INDEX idx_book_publisher ON Book (publisher_id);
 
-BookSubject (
-    book_id INT,
-    subject VARCHAR(50),
+CREATE TABLE BookSubject (
+    book_id INT NOT NULL,
+    subject VARCHAR(50) NOT NULL,
     PRIMARY KEY (book_id, subject),
     FOREIGN KEY (book_id) REFERENCES Book(book_id)
 );
 
-Member (
+CREATE TABLE Member (
     member_id INT PRIMARY KEY,
     member_name VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
-    phone VARCHAR(20)
+    phone VARCHAR(20) NOT NULL
 );
 
-Loan (
+CREATE TABLE Loan (
     loan_id INT PRIMARY KEY,
     book_id INT NOT NULL,
     member_id INT NOT NULL,
@@ -338,7 +376,13 @@ Loan (
     return_date DATE,
     FOREIGN KEY (book_id) REFERENCES Book(book_id),
     FOREIGN KEY (member_id) REFERENCES Member(member_id)
-);`
+);
+CREATE INDEX idx_loan_book ON Loan (book_id);
+CREATE INDEX idx_loan_member ON Loan (member_id);`,
+            redesignFDs: `publisher_id -> publisher_name, publisher_city
+book_id -> title, isbn, publisher_id
+member_id -> member_name, email, phone
+loan_id -> book_id, member_id, borrow_date, due_date, return_date`
         }
     },
     {
@@ -404,7 +448,9 @@ student_id, course_id, enrollment_semester -> grade`,
         suggestedRedesign: {
             description: 'This schema is already in Boyce-Codd Normal Form (BCNF) and enforces all entity and referential integrity constraints.',
             before: 'Perfect schema',
-            after: 'No restructuring required.'
+            after: `-- Schema is already in Boyce-Codd Normal Form (BCNF)
+-- All entity, domain, and referential integrity constraints are satisfied.`,
+            redesignFDs: ``
         }
     }
 ];
