@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SchemaSense Test Runner</title>
+    <script src="/static/js/schema/schemaModel.js"></script>
+    <script src="/static/js/parser/sqlParser.js"></script>
+    <script src="/static/js/normalization/dependencyEngine.js"></script>
+    <script src="/static/js/smells/smellRegistry.js"></script>
+    <script src="/static/js/smells/relationalSmells.js"></script>
+    <script src="/static/js/smells/normalizationSmells.js"></script>
+    <script src="/static/js/smells/consequenceSmells.js"></script>
+    <script src="/static/js/smells/indexingSmells.js"></script>
+    <script src="/static/js/smells/distributedSmells.js"></script>
+    <script src="/static/js/analyzer/schemaAnalyzer.js"></script>
+    <script src="/static/js/tests/testSuite.js"></script>
+</head>
+<body>
+    <div id="output">Running...</div>
+    <script>
+        window.addEventListener('DOMContentLoaded', async () => {
+            const suite = new SchemaSenseTestSuite();
+            const results = await suite.runAllTests();
+            const outDiv = document.getElementById('output');
+            let passed = 0;
+            let report = '';
+            results.forEach(r => {
+                if (r.passed) passed++;
+                report += `[${r.passed ? 'PASS' : 'FAIL'}] Test ${r.id}: ${r.name} - ${r.details}\n`;
+            });
+            report = `SUMMARY: ${passed} / ${results.length} TESTS PASSED\n\n` + report;
+            outDiv.innerText = report;
+            console.log(report);
+            document.title = `TESTS_DONE: ${passed}/${results.length}`;
+        });
+    </script>
+</body>
+</html>

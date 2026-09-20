@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SchemaSense – Database Schema Smell Detector</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- ==========================================================================
+         TOP NAVIGATION BAR
+         ========================================================================== -->
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="logo-area nav-link" data-view="home">
+                <span class="logo-icon">🔍</span>
+                <div>
+                    <span class="logo-title">SchemaSense</span>
+                    <span class="logo-subtitle">Schema Smell Detector</span>
+                </div>
+            </div>
+
+            <nav class="main-nav">
+                <a href="#" class="nav-link active" data-view="home">Home</a>
+                <a href="#" class="nav-link" data-view="analyze">Analyze</a>
+                <a href="#" class="nav-link" data-view="learn">Learn</a>
+                <a href="#" class="nav-link" data-view="tests">Test Suite</a>
+                <a href="#" class="nav-link" data-view="help">Help</a>
+                <a href="#" class="nav-link" data-view="developed-by">Developed By</a>
+            </nav>
+
+            <div class="header-actions">
+                <button class="btn-theme-toggle" id="theme-toggle-btn" title="Toggle Day / Night Mode">
+                    🌙 Night Mode
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================================================
+         1. HOME VIEW
+         ========================================================================== -->
+    <main id="view-home" class="page-view active">
+        <section class="hero-section">
+            <div class="hero-badge">B.Tech Database Systems Course Project</div>
+            <h1 class="hero-title">Detect. Understand. <span>Improve.</span></h1>
+            <p class="hero-tagline">Automated Academic Database Schema Smell Detection & Normalization Engine</p>
+            <p class="hero-description">
+                SchemaSense analyzes relational database schemas and identifies 33 common design smells related to
+                domain and key constraints, functional dependencies, 1NF–5NF normalization, B+ tree physical indexing,
+                distributed data allocation, and NoSQL modeling trade-offs.
+            </p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" id="cta-start-analysis">🚀 Start Analysis</button>
+                <button class="btn btn-secondary" id="cta-try-sample">📂 Try Sample Schema</button>
+            </div>
+        </section>
+
+        <div class="home-features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Relational Integrity</h3>
+                <p>Detects missing primary keys, missing or inconsistent foreign keys, orphaned references, and domain constraint violations mapped to Module 1.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📐</div>
+                <h3>Normalization (1NF–5NF)</h3>
+                <p>Computes attribute closures and candidate keys to rigorously flag partial (2NF) and transitive (3NF/BCNF) dependencies, plus 4NF/5NF caveats.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Physical Design & Indexing</h3>
+                <p>Audits B+ tree indexing strategies, flagging missing indexes on foreign keys, redundant prefix indexes, low-selectivity flags, and over-indexing.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>Distributed & NoSQL</h3>
+                <p>Provides educational design advisories on partition hot-spots, unbounded document arrays, replication overheads, and CAP theorem consistency trade-offs.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==========================================================================
+         2. ANALYZE VIEW
+         ========================================================================== -->
+    <main id="view-analyze" class="page-view">
+        <!-- Visual Processing Pipeline Stepper -->
+        <div class="pipeline-stepper" title="Demonstration Processing Pipeline">
+            <div class="pipeline-step completed" id="pipe-step-1">
+                <span class="step-circle">1</span>
+                <span>Input</span>
+            </div>
+            <span class="step-divider">→</span>
+            <div class="pipeline-step completed" id="pipe-step-2">
+                <span class="step-circle">2</span>
+                <span>SQL Parsing</span>
+            </div>
+            <span class="step-divider">→</span>
+            <div class="pipeline-step completed" id="pipe-step-3">
+                <span class="step-circle">3</span>
+                <span>Schema Extraction</span>
+            </div>
+            <span class="step-divider">→</span>
+            <div class="pipeline-step completed" id="pipe-step-4">
+                <span class="step-circle">4</span>
+                <span>Constraints</span>
+            </div>
+            <span class="step-divider">→</span>
+            <div class="pipeline-step completed" id="pipe-step-5">
+                <span class="step-circle">5</span>
+                <span>Dependency Analysis</span>
+            </div>
+            <span class="step-divider">→</span>
+            <div class="pipeline-step completed" id="pipe-step-6">
+                <span class="step-circle">6</span>
+                <span>Normalization</span>
+            </div>
+            <span class="step-divider">→</span>
+            <div class="pipeline-step completed" id="pipe-step-7">
+                <span class="step-circle">7</span>
+                <span>Smell Detection</span>
+            </div>
+            <span class="step-divider">→</span>
+            <div class="pipeline-step completed" id="pipe-step-8">
+                <span class="step-circle">8</span>
+                <span>Recommendations</span>
+            </div>
+            <span class="step-divider">→</span>
+            <div class="pipeline-step completed" id="pipe-step-9">
+                <span class="step-circle">9</span>
+                <span>Visualization</span>
+            </div>
+            <span class="step-divider">→</span>
+            <div class="pipeline-step completed" id="pipe-step-10">
+                <span class="step-circle">10</span>
+                <span>Report</span>
+            </div>
+        </div>
+
+        <!-- Sample Loader Bar -->
+        <div class="sample-bar">
+            <div class="sample-controls">
+                <label for="sample-schema-select"><strong>Sample Schema:</strong></label>
+                <select id="sample-schema-select" class="form-select">
+                    <option value="student-mgmt">Sample 1: Student Management (3NF violation, missing constraints)</option>
+                    <option value="hospital-mgmt">Sample 2: Hospital Management (repeating groups, 1NF multivalued)</option>
+                    <option value="ecommerce-system">Sample 3: E-Commerce System (2NF violation, duplicate index)</option>
+                    <option value="library-mgmt">Sample 4: Library Management (relationship smells, non-atomic)</option>
+                    <option value="perfect-schema">Benchmark: Perfectly Designed Academic Schema (All Pass)</option>
+                </select>
+                <button class="btn btn-secondary" id="btn-load-sample">Load Sample</button>
+            </div>
+            <div id="sample-description-box"></div>
+        </div>
+
+        <!-- Input Mode Tabs -->
+        <div class="input-tabs-nav">
+            <button class="input-tab-btn active" data-pane="pane-sql">Tab 1: SQL DDL Input</button>
+            <button class="input-tab-btn" data-pane="pane-visual">Tab 2: Visual Schema Builder</button>
+            <button class="input-tab-btn" data-pane="pane-advanced">Tab 3: Advanced Analysis (FDs & Distributed)</button>
+        </div>
+
+        <!-- Tab 1: SQL DDL Input -->
+        <div class="input-tab-pane active" id="pane-sql">
+            <div class="editor-box">
+                <textarea id="sql-input" class="sql-textarea" placeholder="Paste SQL CREATE TABLE / CREATE INDEX statements here..." spellcheck="false"></textarea>
+            </div>
+        </div>
+
+        <!-- Tab 2: Visual Schema Input -->
+        <div class="input-tab-pane" id="pane-visual">
+            <div style="margin-bottom: 12px;">
+                <button class="btn btn-secondary" id="btn-visual-add-table">+ Add Table</button>
+                <span class="text-muted" style="margin-left: 10px; font-size: 13px;">Define tables and attributes visually.</span>
+            </div>
+            <div id="visual-tables-list"></div>
+        </div>
+
+        <!-- Tab 3: Advanced Analysis Options -->
+        <div class="input-tab-pane" id="pane-advanced">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+                <div class="chart-card">
+                    <h4>Functional Dependencies (Optional)</h4>
+                    <p class="text-muted" style="font-size: 12px; margin-bottom: 8px;">Enter one per line, e.g., <code>student_id -> student_name, dept_id</code></p>
+                    <textarea id="fd-input" class="fd-textarea" style="min-height: 140px;" placeholder="student_id -> student_name, department_id&#10;department_id -> department_name" spellcheck="false"></textarea>
+                </div>
+                <div class="chart-card">
+                    <h4>Workload & Physical Design Options</h4>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; font-weight: bold;">Frequently Queried Filter Columns (comma separated):</label>
+                        <input type="text" id="adv-search-cols" class="form-input" style="width: 100%; margin-top: 4px;" placeholder="Orders.customer_id, Student.department_id">
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; font-weight: bold;">NoSQL Model Type (Optional):</label>
+                        <select id="adv-nosql-model" class="form-select" style="width: 100%; margin-top: 4px;">
+                            <option value="none">None (Standard Relational RDBMS)</option>
+                            <option value="document">Document Database (e.g. MongoDB)</option>
+                            <option value="key-value">Key-Value Store (e.g. DynamoDB / Redis)</option>
+                            <option value="columnar">Wide-Column Store (e.g. Cassandra)</option>
+                            <option value="graph">Graph Database (e.g. Neo4j)</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; font-weight: bold;">Partition Key Candidate:</label>
+                        <input type="text" id="adv-partition-key" class="form-input" style="width: 100%; margin-top: 4px;" placeholder="e.g. status, user_id, date">
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: bold;">Replication Factor:</label>
+                            <input type="number" id="adv-repl-factor" class="form-input" style="width: 100%; margin-top: 4px;" value="1" min="1" max="10">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: bold;">Fragmentation:</label>
+                            <select id="adv-fragmentation" class="form-select" style="width: 100%; margin-top: 4px;">
+                                <option value="none">None</option>
+                                <option value="horizontal">Horizontal</option>
+                                <option value="vertical">Vertical</option>
+                                <option value="hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 12px;">
+                        <label style="font-size: 12px; font-weight: bold;">Stated CAP Priorities:</label>
+                        <div style="display: flex; gap: 14px; margin-top: 4px;">
+                            <label class="checkbox-label"><input type="checkbox" id="cap-c" checked> Consistency (C)</label>
+                            <label class="checkbox-label"><input type="checkbox" id="cap-a" checked> Availability (A)</label>
+                            <label class="checkbox-label"><input type="checkbox" id="cap-p"> Partition Tolerance (P)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-bar" style="margin-top: 16px;">
+            <button class="btn btn-primary" id="btn-run-analysis" style="font-size: 15px; padding: 10px 24px;">
+                ⚡ Analyze Schema
+            </button>
+            <button class="btn btn-outline" id="btn-clear-input">Clear</button>
+        </div>
+
+        <!-- Error Container -->
+        <div id="analysis-error-box" style="display: none; margin-bottom: 24px;"></div>
+
+        <!-- ==========================================================================
+             RESULTS DASHBOARD (DISPLAYED AFTER ANALYSIS)
+             ========================================================================== -->
+        <section id="results-section">
+            <!-- Health & Export Bar -->
+            <div class="results-header-card">
+                <div class="health-status-block">
+                    <div>
+                        <span class="info-label">Overall Schema Health</span>
+                        <div id="res-health-badge" class="health-badge health-good">Good</div>
+                    </div>
+                    <div style="max-width: 480px;">
+                        <p id="res-health-desc" style="font-size: 13.5px; color: var(--text-secondary);"></p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-primary btn-sm" id="btn-download-pdf">📄 Download PDF Report</button>
+                    <button class="btn btn-secondary btn-sm" id="btn-download-txt">📝 Download TXT Report</button>
+                    <button class="btn btn-outline btn-sm" id="btn-download-json">{ } JSON Export</button>
+                </div>
+            </div>
+
+            <!-- Metrics Summary Tiles -->
+            <div class="metrics-summary-bar">
+                <div class="metric-tile">
+                    <div class="metric-num" id="metric-tables">0</div>
+                    <div class="metric-label">Tables</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="metric-num" id="metric-columns">0</div>
+                    <div class="metric-label">Columns</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="metric-num" id="metric-pks">0</div>
+                    <div class="metric-label">Primary Keys</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="metric-num" id="metric-fks">0</div>
+                    <div class="metric-label">Foreign Keys</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="metric-num" id="metric-indexes">0</div>
+                    <div class="metric-label">Indexes</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="metric-num" id="metric-highest-nf" style="font-size: 16px; margin-top: 4px;">1NF</div>
+                    <div class="metric-label">Overall Normal Form</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="metric-num" id="count-critical" style="color: #ef4444;">0</div>
+                    <div class="metric-label">Critical Issues</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="metric-num" id="count-warning" style="color: #f59e0b;">0</div>
+                    <div class="metric-label">Warnings</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="metric-num" id="count-suggestion" style="color: #3b82f6;">0</div>
+                    <div class="metric-label">Suggestions</div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h4>Smells by Category</h4>
+                    <div id="chart-categories"></div>
+                </div>
+                <div class="chart-card">
+                    <h4>Severity Distribution</h4>
+                    <div id="chart-severity"></div>
+                </div>
+                <div class="chart-card">
+                    <h4>Table-wise Smell Count</h4>
+                    <div id="chart-tables"></div>
+                </div>
+            </div>
+
+            <!-- Stepwise Normalization Ladder -->
+            <div class="norm-section-card">
+                <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text-primary);">Stepwise Normalization Analysis (1NF – 5NF)</h3>
+                <p class="text-muted" style="font-size: 13px; margin-bottom: 16px;">
+                    Algorithmically evaluates compliance through attribute closures, Armstrong's axioms, and candidate keys.
+                </p>
+                <div id="norm-ladder-container"></div>
+            </div>
+
+            <!-- Interactive SVG ER Diagram -->
+            <div class="er-section-card">
+                <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text-primary);">Relational Schema & Constraint Visualization</h3>
+                <p class="text-muted" style="font-size: 13px; margin-bottom: 16px;">
+                    Entity relationships with foreign keys and problem highlights.
+                </p>
+                <div class="er-canvas-wrapper" id="er-diagram-container"></div>
+            </div>
+
+            <!-- Before / After Suggested Redesign -->
+            <div class="er-section-card">
+                <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text-primary);">Suggested Normalization Redesign (Before vs After)</h3>
+                <div id="redesign-content"></div>
+            </div>
+
+            <!-- Detected Smells List -->
+            <div class="smells-section">
+                <div class="smells-filter-bar">
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <div class="filter-group">
+                            <label for="filter-severity">Severity:</label>
+                            <select id="filter-severity" class="form-select">
+                                <option value="all">All Severities</option>
+                                <option value="HIGH">High (Critical)</option>
+                                <option value="MEDIUM">Medium (Warning)</option>
+                                <option value="LOW">Low (Suggestion)</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-category">Category:</label>
+                            <select id="filter-category" class="form-select">
+                                <option value="all">All Categories</option>
+                                <option value="Relational Schema">Relational Schema</option>
+                                <option value="Normalization">Normalization</option>
+                                <option value="Normalization Consequences / Anomalies">Anomalies</option>
+                                <option value="Physical Design & Indexing">Indexing</option>
+                                <option value="Distributed & NoSQL Design">Distributed / NoSQL</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-status">Status:</label>
+                            <select id="filter-status" class="form-select">
+                                <option value="all">All Statuses</option>
+                                <option value="Detected">Detected</option>
+                                <option value="Potential / Needs Review">Potential / Needs Review</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline btn-sm" id="btn-expand-all">Expand All</button>
+                        <button class="btn btn-outline btn-sm" id="btn-collapse-all">Collapse All</button>
+                    </div>
+                </div>
+
+                <div id="smells-list-container"></div>
+            </div>
+
+            <!-- Syllabus Concepts Demonstrated -->
+            <div class="norm-section-card">
+                <h4 style="font-size: 16px; margin-bottom: 8px;">📚 Database Concepts Demonstrated in this Analysis:</h4>
+                <ul id="concepts-list" style="list-style: none; padding-left: 0;"></ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==========================================================================
+         3. LEARN VIEW (TOPICS A - T & VIDEO)
+         ========================================================================== -->
+    <main id="view-learn" class="page-view">
+        <div style="max-width: 900px; margin: 0 auto;">
+            <h2 style="font-size: 28px; font-weight: 800; margin-bottom: 8px;">Database Systems Curriculum Knowledge Base</h2>
+            <p class="text-muted" style="margin-bottom: 24px;">Comprehensive academic explanations for Topics A through T mapped directly to course modules.</p>
+
+            <!-- Embedded Educational Video -->
+            <div class="chart-card" style="margin-bottom: 30px;">
+                <h4>🎥 Featured Lecture: Database Normalization (1NF, 2NF, 3NF, BCNF)</h4>
+                <p class="text-muted" style="font-size: 13px; margin-bottom: 12px;">Curated educational video illustrating Boyce-Codd Normal Form and functional dependencies.</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/UrYLYV7WSHM" title="Database Normalization - 1NF, 2NF, 3NF, BCNF" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="learn-grid">
+                <!-- A -->
+                <div class="concept-card">
+                    <h3>A. What is a Database Schema?</h3>
+                    <p>A database schema represents the formal logical blueprint defining the structure of a database. It specifies entity relation structures, attribute names, domains/data types, and integrity constraints without storing the actual data instances themselves.</p>
+                    <span class="badge badge-syllabus">Module 1</span>
+                </div>
+
+                <!-- B -->
+                <div class="concept-card">
+                    <h3>B. What is a Database Smell?</h3>
+                    <p>A database smell is a symptom of poor schema design that violates relational theory, compromises entity or referential integrity, risks data anomalies, or degrades query performance without necessarily throwing a syntax error.</p>
+                    <span class="badge badge-syllabus">Core Theory</span>
+                </div>
+
+                <!-- C -->
+                <div class="concept-card">
+                    <h3>C. Why Database Design Matters</h3>
+                    <p>Suboptimal schemas cause severe storage bloat, inconsistent multi-row updates, broken application logic, slow table joins, and lock contention. Clean relational modeling preserves data integrity at the persistence layer.</p>
+                    <span class="badge badge-syllabus">Module 1 & 2</span>
+                </div>
+
+                <!-- D -->
+                <div class="concept-card">
+                    <h3>D. Primary Keys & Candidate Keys</h3>
+                    <p>A <em>candidate key</em> is a minimal superkey capable of uniquely identifying any tuple. The schema designer chooses one candidate key as the <em>Primary Key</em>, enforcing Entity Integrity: no part of the primary key may be NULL.</p>
+                    <span class="badge badge-syllabus">Module 1</span>
+                </div>
+
+                <!-- E -->
+                <div class="concept-card">
+                    <h3>E. Foreign Keys & Referential Integrity</h3>
+                    <p>A foreign key matches the candidate key of another (or the same) relation. Referential integrity dictates that every foreign key value must either match an existing parent key or be NULL, preventing orphaned tuples.</p>
+                    <span class="badge badge-syllabus">Module 1</span>
+                </div>
+
+                <!-- F -->
+                <div class="concept-card">
+                    <h3>F. Functional Dependencies (FDs)</h3>
+                    <p>A functional dependency \(X \rightarrow Y\) states that the values of attribute set \(X\) uniquely determine the values of attribute set \(Y\). Armstrong's Axioms (Reflexivity, Augmentation, Transitivity) form the sound and complete basis for computing closures.</p>
+                    <span class="badge badge-syllabus">Module 2</span>
+                </div>
+
+                <!-- G -->
+                <div class="concept-card">
+                    <h3>G. First Normal Form (1NF)</h3>
+                    <p>A relation is in 1NF if and only if all domain attributes are atomic (no repeating groups, comma-separated lists, or nested relations) and every tuple is uniquely distinguishable (has a primary key).</p>
+                    <span class="badge badge-syllabus">Module 2</span>
+                </div>
+
+                <!-- H -->
+                <div class="concept-card">
+                    <h3>H. Second Normal Form (2NF)</h3>
+                    <p>A relation is in 2NF if it is in 1NF and every non-prime attribute is fully functionally dependent on every candidate key. It prohibits partial dependencies where a column depends on only part of a composite key.</p>
+                    <span class="badge badge-syllabus">Module 2</span>
+                </div>
+
+                <!-- I -->
+                <div class="concept-card">
+                    <h3>I. Third Normal Form (3NF)</h3>
+                    <p>A relation is in 3NF if it is in 2NF and no non-prime attribute is transitively dependent on a candidate key. For every non-trivial \(X \rightarrow A\), either \(X\) is a superkey or \(A\) is a prime attribute.</p>
+                    <span class="badge badge-syllabus">Module 2</span>
+                </div>
+
+                <!-- J -->
+                <div class="concept-card">
+                    <h3>J. Boyce-Codd Normal Form (BCNF)</h3>
+                    <p>BCNF is a stricter version of 3NF. A relation is in BCNF if and only if for every non-trivial functional dependency \(X \rightarrow A\), determinant \(X\) is a superkey. It eliminates anomalies when overlapping composite keys exist.</p>
+                    <span class="badge badge-syllabus">Module 2</span>
+                </div>
+
+                <!-- K -->
+                <div class="concept-card">
+                    <h3>K. Fourth Normal Form (4NF)</h3>
+                    <p>A relation is in 4NF if it is in BCNF and contains no non-trivial Multivalued Dependencies (MVDs, \(X \twoheadrightarrow Y\)) where \(X\) is not a superkey. It prevents storing independent multi-valued facts (e.g. skills and spoken languages) together.</p>
+                    <span class="badge badge-syllabus">Module 2</span>
+                </div>
+
+                <!-- L -->
+                <div class="concept-card">
+                    <h3>L. Fifth Normal Form (5NF / PJNF)</h3>
+                    <p>Project-Join Normal Form (5NF) deals with relations that cannot be decomposed losslessly into two components, but can be decomposed into three or more projections via join dependencies (\(*\{R_1, R_2, \dots, R_n\}\)).</p>
+                    <span class="badge badge-syllabus">Module 2</span>
+                </div>
+
+                <!-- M -->
+                <div class="concept-card">
+                    <h3>M. Database Anomalies</h3>
+                    <p><strong>Update Anomaly:</strong> Changing a fact requires updating multiple rows.<br>
+                    <strong>Insert Anomaly:</strong> Cannot insert an independent entity without creating dummy parent records.<br>
+                    <strong>Delete Anomaly:</strong> Deleting one entity accidentally purges information about another entity.</p>
+                    <span class="badge badge-syllabus">Module 2</span>
+                </div>
+
+                <!-- N -->
+                <div class="concept-card">
+                    <h3>N. Physical Indexing Fundamentals</h3>
+                    <p>Indexes are auxiliary data structures that accelerate record retrieval at the cost of disk space and write overhead. Index selectivity measures the percentage of rows returned: high selectivity justifies index usage.</p>
+                    <span class="badge badge-syllabus">Module 3</span>
+                </div>
+
+                <!-- O -->
+                <div class="concept-card">
+                    <h3>O. B+ Tree Indexing</h3>
+                    <p>B+ Trees maintain balanced logarithmic height \(O(\log N)\) where all data records or row pointers reside in leaf nodes linked sequentially. Leftmost prefix matching allows a compound index on \((A, B)\) to satisfy searches on \(A\).</p>
+                    <span class="badge badge-syllabus">Module 3</span>
+                </div>
+
+                <!-- P -->
+                <div class="concept-card">
+                    <h3>P. Transactions and ACID Properties</h3>
+                    <p><strong>Atomicity:</strong> All-or-nothing execution.<br>
+                    <strong>Consistency:</strong> Schema integrity constraints preserved.<br>
+                    <strong>Isolation:</strong> Concurrency resembles serial schedule.<br>
+                    <strong>Durability:</strong> Committed updates persist through system crashes.</p>
+                    <span class="badge badge-syllabus">Module 4</span>
+                </div>
+
+                <!-- Q -->
+                <div class="concept-card">
+                    <h3>Q. Concurrency Control & Two-Phase Locking</h3>
+                    <p>Strict Two-Phase Locking (2PL) guarantees conflict serializability by dividing transaction lock acquisition into a Growing Phase (only acquiring locks) and a Shrinking Phase (releasing locks upon commit).</p>
+                    <span class="badge badge-syllabus">Module 4</span>
+                </div>
+
+                <!-- R -->
+                <div class="concept-card">
+                    <h3>R. Distributed Databases & Fragmentation</h3>
+                    <p>Data can be partitioned across nodes horizontally (rows split by predicate), vertically (columns split by access pattern), or hybrid. Poor fragmentation boundaries trigger expensive distributed joins.</p>
+                    <span class="badge badge-syllabus">Module 5</span>
+                </div>
+
+                <!-- S -->
+                <div class="concept-card">
+                    <h3>S. CAP Theorem & PACELC</h3>
+                    <p>In the presence of a network partition (\(P\)), a distributed system must choose between Consistency (\(C\)) and Availability (\(A\)). In absence of partition, the system trades off Latency (\(L\)) and Consistency (\(C\)).</p>
+                    <span class="badge badge-syllabus">Module 5</span>
+                </div>
+
+                <!-- T -->
+                <div class="concept-card">
+                    <h3>T. NoSQL Database Models</h3>
+                    <p>Includes Key-Value (simple primary lookup), Document (hierarchical JSON/BSON with embedding vs referencing trade-offs), Column-family (sparse wide columns), and Graph databases (optimized for recursive traversal).</p>
+                    <span class="badge badge-syllabus">Module 5</span>
+                </div>
+            </div>
+
+            <!-- References Section -->
+            <div class="norm-section-card" style="margin-top: 36px;">
+                <h3 style="font-size: 18px; margin-bottom: 12px; color: var(--text-primary);">Academic References & Bibliography</h3>
+                <ul style="padding-left: 20px; line-height: 1.8; font-size: 13.5px; color: var(--text-secondary);">
+                    <li><strong>Silberschatz, A., Korth, H. F., & Sudarshan, S.</strong> (2020). <em>Database System Concepts</em> (7th ed.). McGraw-Hill Education.</li>
+                    <li><strong>Elmasri, R., & Navathe, S. B.</strong> (2016). <em>Fundamentals of Database Systems</em> (7th ed.). Pearson.</li>
+                    <li><strong>Ramakrishnan, R., & Gehrke, J.</strong> (2003). <em>Database Management Systems</em> (3rd ed.). McGraw-Hill.</li>
+                    <li><strong>Codd, E. F.</strong> (1970). <em>A Relational Model of Data for Large Shared Data Banks</em>. Communications of the ACM, 13(6), 377–387.</li>
+                    <li><strong>Brewer, E. A.</strong> (2012). <em>CAP twelve years later: How the "rules" have changed</em>. Computer, 45(2), 23–29.</li>
+                    <li><strong>Fowler, M., & Sadalage, P. J.</strong> (2012). <em>NoSQL Distilled: A Brief Guide to the Emerging World of Polyglot Persistence</em>. Addison-Wesley.</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==========================================================================
+         4. TEST SUITE VIEW
+         ========================================================================== -->
+    <main id="view-tests" class="page-view">
+        <div class="test-suite-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <h2 style="font-size: 24px; font-weight: 800; color: var(--text-primary);">Automated Verification Test Suite</h2>
+                    <p class="text-muted" style="font-size: 13px;">Executes 12 unit tests verifying parsing resilience, constraint validation, 1NF–5NF normalization, and physical indexing rules.</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span id="test-suite-summary-badge" class="badge" style="font-size: 13px; padding: 6px 12px;">Ready</span>
+                    <button class="btn btn-primary" id="btn-run-tests">▶ Run All 12 Tests</button>
+                </div>
+            </div>
+
+            <div id="test-suite-results">
+                <div class="chart-empty-state" style="padding: 30px; text-align: center; color: var(--text-muted);">
+                    Click "Run All 12 Tests" to execute verification assertions in real time.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==========================================================================
+         5. HELP SECTION
+         ========================================================================== -->
+    <main id="view-help" class="page-view">
+        <div style="max-width: 860px; margin: 0 auto;">
+            <h2 style="font-size: 28px; font-weight: 800; margin-bottom: 12px;">SchemaSense User Manual</h2>
+            <p class="text-muted" style="margin-bottom: 24px;">Step-by-step instructions for analyzing schemas, reviewing normalization breakdowns, and generating academic reports.</p>
+
+            <div class="norm-section-card">
+                <h4 style="font-size: 16px; margin-bottom: 12px; color: var(--color-primary);">Step-by-Step Workflow Guide:</h4>
+                <ol style="padding-left: 20px; line-height: 1.9; font-size: 14px; color: var(--text-secondary);">
+                    <li><strong>Open the Schema Analyzer:</strong> Navigate to the <em>Analyze</em> tab in the top navigation bar.</li>
+                    <li><strong>Choose Input Method:</strong>
+                        <ul style="padding-left: 18px; margin: 4px 0;">
+                            <li><strong>Tab 1 (SQL DDL):</strong> Paste your SQL schema statements (<code>CREATE TABLE</code>, <code>CREATE INDEX</code>).</li>
+                            <li><strong>Tab 2 (Visual Schema Builder):</strong> Interactively add tables, select data types, and check Primary Key, Unique, or NOT NULL constraints.</li>
+                            <li><strong>Tab 3 (Advanced Options):</strong> Optionally provide functional dependencies (<code>A -> B</code>), partition keys, or NoSQL model parameters.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Load Sample Schema (Optional):</strong> Select a built-in schema from the dropdown (e.g., Student Management) and click <em>Load Sample</em> for instant demonstration.</li>
+                    <li><strong>Click "Analyze Schema":</strong> The system executes the 10-stage processing pipeline and generates real-time results.</li>
+                    <li><strong>Inspect the Health Summary:</strong> Review overall schema health (Good / Needs Attention / Significant Issues) and key metric tiles.</li>
+                    <li><strong>Examine Stepwise Normalization:</strong> Check the table-by-table 1NF, 2NF, 3NF, BCNF, 4NF, and 5NF status ladder.</li>
+                    <li><strong>Inspect the Interactive ER Diagram:</strong> Review foreign-key arrows and glowing badges on problematic tables.</li>
+                    <li><strong>Filter & Expand Smell Cards:</strong> Filter by severity (High/Medium/Low) to view specific technical explanations, schema examples, and suggestions.</li>
+                    <li><strong>Compare Suggested Redesign:</strong> Review the Before vs After normalization panel to understand recommended decompositions.</li>
+                    <li><strong>Download Academic Report:</strong> Export a comprehensive report in <strong>PDF</strong>, <strong>TXT</strong>, or <strong>JSON</strong> format.</li>
+                </ol>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==========================================================================
+         6. DEVELOPED BY SECTION
+         ========================================================================== -->
+    <main id="view-developed-by" class="page-view">
+        <div style="max-width: 860px; margin: 0 auto; text-align: center;">
+            <div class="hero-badge">Academic Project Team</div>
+            <h2 style="font-size: 30px; font-weight: 800; margin-bottom: 8px;">Project Contributors & Mentorship</h2>
+            <p class="text-muted" style="margin-bottom: 36px;">B.Tech Course in Database Systems | SchemaSense Academic Capstone</p>
+
+            <div class="team-grid">
+                <!-- Team Member 1 -->
+                <div class="team-card">
+                    <div class="student-avatar-placeholder">👤</div>
+                    <h4>[ENTER NAME]</h4>
+                    <div class="reg-number">Register No: [ENTER REGISTER NUMBER]</div>
+                    <p class="text-muted" style="font-size: 13px;">B.Tech Computer Science & Engineering</p>
+                </div>
+
+                <!-- Team Member 2 -->
+                <div class="team-card">
+                    <div class="student-avatar-placeholder">👤</div>
+                    <h4>[ENTER NAME]</h4>
+                    <div class="reg-number">Register No: [ENTER REGISTER NUMBER]</div>
+                    <p class="text-muted" style="font-size: 13px;">B.Tech Computer Science & Engineering</p>
+                </div>
+            </div>
+
+            <div class="guide-box">
+                <span class="info-label">Faculty Guidance</span>
+                <h3 style="font-size: 20px; color: var(--color-primary); margin: 6px 0 2px;">Dr. Swaminathan A</h3>
+                <div style="font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Assistant Professor</div>
+                <p class="text-muted" style="font-size: 13px;">Department of Computer Science & Engineering<br>School of Computer Science & Information Systems</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==========================================================================
+         JAVASCRIPT MODULES
+         ========================================================================== -->
+    <script src="/static/js/schema/schemaModel.js"></script>
+    <script src="/static/js/parser/sqlParser.js"></script>
+    <script src="/static/js/normalization/dependencyEngine.js"></script>
+    <script src="/static/js/smells/smellRegistry.js"></script>
+    <script src="/static/js/smells/relationalSmells.js"></script>
+    <script src="/static/js/smells/normalizationSmells.js"></script>
+    <script src="/static/js/smells/consequenceSmells.js"></script>
+    <script src="/static/js/smells/indexingSmells.js"></script>
+    <script src="/static/js/smells/distributedSmells.js"></script>
+    <script src="/static/js/analyzer/schemaAnalyzer.js"></script>
+    <script src="/static/js/visualization/erDiagram.js"></script>
+    <script src="/static/js/visualization/charts.js"></script>
+    <script src="/static/js/reports/reportGenerator.js"></script>
+    <script src="/static/js/samples/sampleData.js"></script>
+    <script src="/static/js/tests/testSuite.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
